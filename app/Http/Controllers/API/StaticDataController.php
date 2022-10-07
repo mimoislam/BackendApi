@@ -35,7 +35,7 @@ class StaticDataController extends Controller
         $staticdata = $staticdata->orderBy('label','asc')->paginate($per_page);
         $items = StaticDataResource::collection($staticdata);
 
-        $response = [
+        $response = [ 
             'pagination' => json_pagination_response($items),
             'data' => $items,
         ];

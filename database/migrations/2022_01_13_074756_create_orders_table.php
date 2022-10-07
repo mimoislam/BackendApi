@@ -26,8 +26,9 @@ class CreateOrdersTable extends Migration
             $table->dateTime('date')->nullable();
             $table->dateTime('pickup_datetime')->nullable();
             $table->dateTime('delivery_datetime')->nullable();
+            $table->dateTime('acceptation_datetime')->nullable();
             $table->unsignedBigInteger('parent_order_id')->nullable();
-            $table->unsignedBigInteger('payment_id')->nullable();
+            //$table->unsignedBigInteger('payment_id')->nullable();
             $table->text('reason')->nullable();
             $table->string('status')->nullable();
             $table->string('payment_collect_from')->nullable()->comment('on_pickup, on_delivery');

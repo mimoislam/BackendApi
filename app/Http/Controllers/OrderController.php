@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Payment;
@@ -51,6 +52,48 @@ class OrderController extends Controller
             'order_id' => $result->id,
             'order' => $result,
         ];
+
+        $user = auth()->user();
+
+        $deliveryRequest=$request->delivery_point;
+
+        $addressDelivery=$user->addressOnDelivery->where('lat','=',$deliveryRequest['latitude'])->where('long','=',$deliveryRequest['longitude'])->first();
+        if ($addressDelivery === null) {
+
+            $addressDelivery=new Address;
+            $addressDelivery->user_id=$user->id;
+            $addressDelivery->lat=$deliveryRequest['latitude'];
+            $addressDelivery->long=$deliveryRequest['longitude'];
+            $addressDelivery->address=$deliveryRequest['address'];
+            $addressDelivery->is_on_delivery=true;
+        }else{
+            $addressDelivery->count=$addressDelivery->count+1;
+        }
+
+
+        $pickupRequest=$request->get('pickup_point');
+        $addressPickup=$user->addressOnPickup->where('lat','=',$pickupRequest['latitude'])->where('long','=',$pickupRequest['longitude'])->first();
+
+        if ($addressPickup === null) {
+            $addressPickup=new Address;
+            $addressPickup->user_id=$user->id;
+            $addressPickup->lat=$pickupRequest['latitude'];
+            $addressPickup->long=$pickupRequest['longitude'];
+            $addressPickup->address=$pickupRequest['address'];
+            $addressPickup->is_on_delivery=false;
+        }else{
+            $addressPickup->count=$addressPickup->count+1;
+        }
+
+
+
+
+
+
+
+
+        $addressDelivery->save();
+        $addressPickup->save();
         saveOrderHistory($history_data);
 
         if($request->is('api/*')) {
@@ -111,7 +154,7 @@ class OrderController extends Controller
                 'order_id' => $id,
                 'order' => $order,
             ];
-        
+
             saveOrderHistory($history_data);
         }
 
@@ -120,7 +163,7 @@ class OrderController extends Controller
             $paymentdata = [
                 'payment_status' => isset($request->payment_status) ? $request->payment_status : 'pending'
             ];
-            
+
             $payment->update($paymentdata);
 
             $history_data = [
@@ -139,11 +182,11 @@ class OrderController extends Controller
                 'order_id' => $id,
                 'order' => $order,
             ];
-            
+
             saveOrderHistory($history_data);
         }
 
-        
+
         if($request->is('api/*')) {
             return json_message_response($message);
 		}
@@ -159,12 +202,12 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         $message = __('message.msg_fail_to_delete',['item' => __('message.order')] );
-        
+
         if( $order != '' ) {
             $order->delete();
             $message = __('message.msg_deleted',['name' => __('message.order')] );
         }
-        
+
         if(request()->is('api/*')){
             return json_custom_response(['message'=> $message , 'status' => true]);
         }
@@ -202,7 +245,7 @@ class OrderController extends Controller
                 'order_id' => $id,
                 'order' => $order,
             ];
-            
+
             saveOrderHistory($history_data);
         }
 
@@ -213,7 +256,7 @@ class OrderController extends Controller
                 'order_id' => $id,
                 'order' => $order,
             ];
-            
+
             saveOrderHistory($history_data);
         }
 
@@ -224,7 +267,7 @@ class OrderController extends Controller
                 'order_id' => $id,
                 'order' => $order,
             ];
-            
+
             saveOrderHistory($history_data);
         }
 

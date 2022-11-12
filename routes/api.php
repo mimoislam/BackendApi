@@ -27,13 +27,13 @@ Route::post('social-login',[ API\UserController::class, 'socialLogin' ]); // log
 
 Route::get('user-list',[API\UserController::class, 'userList']); // list users by user_type or country_id or city_id or status or is_deleted (soft delete)  or no filter return per pages
 
-Route::get('staticdata-list',[API\StaticDataController::class,'getList']); // list static data by type or keyword 
+Route::get('staticdata-list',[API\StaticDataController::class,'getList']); // list static data by type or keyword
 
-Route::get('user-detail',[API\UserController::class, 'userDetail']); // user details 
+Route::get('user-detail',[API\UserController::class, 'userDetail']); // user details
 
 Route::get('country-list', [ API\CountryController::class, 'getList' ] ); // list countries by status or code or is_deleted (soft delete)  or no filter / return per pages orderded by 'name','asc'
 
-Route::get('country-detail', [ API\CountryController::class, 'getDetail' ] ); // country details 
+Route::get('country-detail', [ API\CountryController::class, 'getDetail' ] ); // country details
 
 Route::get('city-list', [ API\CityController::class, 'getList' ] ); // list cities by country_id or name or status or is_deleted (soft delete) or no filter return per pages / return per pages orderded by 'name','asc'
 
@@ -41,12 +41,15 @@ Route::get('city-detail', [ API\CityController::class, 'getDetail' ] ); // city 
 
 Route::get('extracharge-list', [ API\ExtraChargeController::class, 'getList' ] ); // list extra chages by status or city_id or is_deleted (soft delete) or no filter / return per pages orderded by 'title','asc'
 
-Route::get('paymentgateway-list',[API\PaymentGatewayController::class,'getList']);// list paymentgateway by status or no filter / return per pages orderded by 'title','asc'
+//Route::get('paymentgateway-list',[API\PaymentGatewayController::class,'getList']);// list paymentgateway by status or no filter / return per pages orderded by 'title','asc'
 
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('dashboard-detail', [ API\UserController::class, 'dashboard' ]); // dashboard content informations about the app for admins
+    Route::get('pickup-address', [ API\AddressController::class, 'pickupAddress' ]); // dashboard content informations about the app for admins
+    Route::get('delivery-address', [ API\AddressController::class, 'deliveryAddress' ]); // dashboard content informations about the app for admins
+    Route::post('address', [ API\AddressController::class, 'store' ]); // dashboard content informations about the app for admins
 
     Route::post('country-save', [ App\Http\Controllers\CountryController::class, 'store' ] ); //bayna
 
@@ -63,7 +66,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('extracharge-delete/{id}', [ App\Http\Controllers\ExtraChargeController::class, 'destroy' ] );//bayna
     Route::post('extracharge-action', [ App\Http\Controllers\ExtraChargeController::class, 'action' ] );  // forcedelete or restore depending on the request type
 
-    
+
     Route::post('staticdata-save',[ App\Http\Controllers\StaticDataController::class, 'store' ]);//bayna
     Route::post('staticdata-delete/{id}',[ App\Http\Controllers\StaticDataController::class, 'destroy' ]);//bayna
 
@@ -77,18 +80,18 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('order-action', [ App\Http\Controllers\OrderController::class, 'action' ] ); // forcedelete or restore depending on the request type
 
 
-    Route::post('paymentgateway-save', [ App\Http\Controllers\PaymentGatewayController::class, 'store' ] );//bayna
-    
-    Route::post('payment-save', [ API\PaymentController::class, 'paymentSave' ] );// update payment date -> add payment id to order -> save order -> saveorderhistory -> return message +  satus code
+//    Route::post('paymentgateway-save', [ App\Http\Controllers\PaymentGatewayController::class, 'store' ] );//bayna
+//
+//    Route::post('payment-save', [ API\PaymentController::class, 'paymentSave' ] );// update payment date -> add payment id to order -> save order -> saveorderhistory -> return message +  satus code
+//
+//    Route::get('payment-list', [ API\PaymentController::class, 'getList' ] );// list all the payments ordered by  'id','desc'  per pages (number pages choosed in request) /return json response
 
-    Route::get('payment-list', [ API\PaymentController::class, 'getList' ] );// list all the payments ordered by  'id','desc'  per pages (number pages choosed in request) /return json response
-
-    Route::post('notification-list',[API\NotificationController::class,'getList']); // list notifications listed by created_at  per  pages (number pages choosed in request)  /return json response   
+    Route::post('notification-list',[API\NotificationController::class,'getList']); // list notifications listed by created_at  per  pages (number pages choosed in request)  /return json response
         /* $response = [
             'notification_data' => $items,
             'all_unread_count' => $all_unread_count,
         ];*/
-    Route::post('update-user-status',[API\UserController::class, 'updateUserStatus']); //  update user status return json response 
+    Route::post('update-user-status',[API\UserController::class, 'updateUserStatus']); //  update user status return json response
     /*  $response = [
             'data' => new UserResource($user),
             'message' => $message

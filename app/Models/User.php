@@ -65,7 +65,7 @@ class User extends Authenticatable implements HasMedia
      *
      * @var array
      */
-    
+
      protected $appends = [
         'profile_photo_url',
     ];
@@ -97,6 +97,26 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Order::class,'client_id','id')->withTrashed();
     }
 
+
+    public function addressOnDelivery(){
+        return $this
+            ->hasMany(Address::class,'user_id','id')
+            ->where('is_on_delivery',true)
+            ->orderBy('count', 'desc')
+            ->withTrashed();
+    }
+
+
+    public function addressOnPickup(){
+        return $this
+            ->hasMany(Address::class,'user_id','id')
+            ->where('is_on_delivery',false)
+            ->orderBy('count', 'desc')
+            ->withTrashed();
+    }
+
+
+
     public function deliveryManOrder(){
         return $this->hasMany(Order::class,'delivery_man_id','id')->withTrashed();
     }
@@ -108,7 +128,7 @@ class User extends Authenticatable implements HasMedia
     protected static function boot(){
         parent::boot();
         static::deleted(function ($row) {
-            
+
             switch ($row->user_type) {
                 case 'client':
                     $row->order()->delete();
